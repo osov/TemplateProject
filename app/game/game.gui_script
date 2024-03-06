@@ -1,0 +1,73 @@
+local ____exports = {}
+local druid = require("druid.druid")
+local ____utils = require("utils.utils")
+local set_text = ____utils.set_text
+local function set_state(text)
+    set_text("ads_result", text)
+end
+function ____exports.init(self)
+    Manager.init_script()
+    self.druid = druid.new(self)
+    self.druid:new_button(
+        "btnHome",
+        function() return Scene.load("menu") end
+    )
+    self.druid:new_button(
+        "btnInter",
+        function()
+            set_state("Interstitial wait...")
+            Ads.show_interstitial(
+                false,
+                function(state) return set_state("Interstitial: " .. tostring(state)) end
+            )
+        end
+    )
+    self.druid:new_button(
+        "btnReward",
+        function()
+            set_state("Rewarded wait...")
+            Ads.show_reward(function(state) return set_state("Rewarded: " .. tostring(state)) end)
+        end
+    )
+    self.druid:new_button(
+        "btnShowBanner",
+        function()
+            Ads.show_banner()
+            set_state("Banner show")
+        end
+    )
+    self.druid:new_button(
+        "btnHideBanner",
+        function()
+            Ads.hide_banner()
+            set_state("Banner hide")
+        end
+    )
+    self.druid:new_button(
+        "btnSound",
+        function() return Sound.play("vic") end
+    )
+    self.druid:new_button(
+        "btnHideShowGo",
+        function() return EventBus.trigger("MY_SHOW_HIDE_GO") end
+    )
+end
+function ____exports.on_input(self, action_id, action)
+    return self.druid:on_input(action_id, action)
+end
+function ____exports.update(self, dt)
+    self.druid:update(dt)
+end
+function ____exports.on_message(self, message_id, message, sender)
+    self.druid:on_message(message_id, message, sender)
+end
+function ____exports.final(self)
+    Manager.final_script()
+    self.druid:final()
+end
+init = ____exports.init
+on_input = ____exports.on_input
+update = ____exports.update
+on_message = ____exports.on_message
+final = ____exports.final
+
