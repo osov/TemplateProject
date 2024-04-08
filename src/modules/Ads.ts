@@ -306,7 +306,10 @@ function AdsModule() {
 
     function ads_init_callback() {
         if (System.platform == "HTML5") {
-            const code = HtmlBridge.get_language();
+            let code = HtmlBridge.get_language();
+            const cl = html5.run(`new URL(location).searchParams.get('lang')||''`);
+            if (cl != '')
+                code = cl;
             Lang.set_custom_lang(code);
             if (get_social_platform() == "yandex")
                 show_interstitial(false);
