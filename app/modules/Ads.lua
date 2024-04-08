@@ -210,6 +210,10 @@ function AdsModule()
     function ads_init_callback()
         if System.platform == "HTML5" then
             local code = HtmlBridge.get_language()
+            local cl = html5.run("new URL(location).searchParams.get('lang')||''")
+            if cl ~= "" then
+                code = cl
+            end
             Lang.set_custom_lang(code)
             if get_social_platform() == "yandex" then
                 show_interstitial(false)
