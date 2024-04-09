@@ -80,8 +80,8 @@ export function GoManager() {
         return go.get(msg.url(undefined, _go, "sprite"), "animation") as hash;
     }
 
-    function set_sprite_hash(_go: hash, id_anim: string) {
-        sprite.play_flipbook(msg.url(undefined, _go, "sprite"), hash(id_anim));
+    function set_sprite_hash(_go: hash, id_anim: string, name_sprite = "sprite") {
+        sprite.play_flipbook(msg.url(undefined, _go, name_sprite), hash(id_anim));
     }
 
     function set_color_hash(_go: hash, color: string, alpha = 1, name = 'sprite') {
