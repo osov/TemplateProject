@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as druid from 'druid.druid';
-import { RATE_FIRST_SHOW, RATE_SECOND_SHOW } from '../main/game_config';
+import { IS_HUAWEI, RATE_FIRST_SHOW, RATE_SECOND_SHOW } from '../main/game_config';
 import { hide_gui_list, show_gui_list } from '../utils/utils';
 
 interface props {
@@ -111,7 +111,7 @@ function show_rate_form(_this: props) {
             log('feedback result:');
         });
     }
-    else if (System.platform == 'Android' || System.platform == 'iPhone OS') {
+    else if ((System.platform == 'Android' && !IS_HUAWEI) || System.platform == 'iPhone OS') {
         if (review != null && review.is_supported())
             review.request_review();
         else
