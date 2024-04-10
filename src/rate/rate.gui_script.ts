@@ -16,9 +16,12 @@ let rate_log: typeof Log.log;
 
 
 export function init(_this: props): void {
-    EventBus.once('ON_MANAGER_READY', (message) => {
-        init_gui(_this);
-        init_rate_info();
+        EventBus.once('ON_MANAGER_READY', (message) => {
+        // есть странный баг креша в айфоне если без таймера тут сделать
+        timer.delay(0, false, () => {
+            init_gui(_this);
+            init_rate_info();
+        });
     });
     EventBus.on('SYS_SHOW_RATE', () => show_form());
     EventBus.on('ON_APPLY_CUSTOM_LANG', () => Lang.apply());
