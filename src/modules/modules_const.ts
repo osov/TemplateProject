@@ -33,7 +33,6 @@ export type _SystemMessages = {
     SYS_SHOW_RATE: VoidMessage,
     ON_APPLY_CUSTOM_LANG: VoidMessage,
     ON_SCENE_LOADED: NameMessage,
-    ON_MANAGER_READY: VoidMessage,
     SYS_SHOW_REWARD: VoidMessage,
     SYS_SHOW_INTER: InterMessage,
     SYS_SHOW_BANNER: ShowBannerData,

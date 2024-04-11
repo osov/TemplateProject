@@ -13,20 +13,6 @@ interface props {
 
 let rate_log: typeof Log.log;
 
-
-
-export function init(_this: props): void {
-        EventBus.once('ON_MANAGER_READY', (message) => {
-        // есть странный баг креша в айфоне если без таймера тут сделать
-        timer.delay(0, false, () => {
-            init_gui(_this);
-            init_rate_info();
-        });
-    });
-    EventBus.on('SYS_SHOW_RATE', () => show_form());
-    EventBus.on('ON_APPLY_CUSTOM_LANG', () => Lang.apply());
-}
-
 function init_gui(_this: props): void {
     gui.set_render_order(10);
     Lang.apply();
@@ -50,7 +36,6 @@ function init_gui(_this: props): void {
     _this.druid.new_button('s2', () => show_rate(2, _this));
     _this.druid.new_button('s3', () => show_rate(3, _this));
     _this.druid.new_button('s4', () => show_rate(4, _this));
-
 }
 
 
@@ -66,6 +51,12 @@ export function update(this: props, dt: number): void {
 }
 
 export function on_message(this: props, message_id: string | hash, message: any, sender: string | hash | url): void {
+    if (message_id == hash('MANAGER_READY')) {
+        init_gui(this);
+        init_rate_info();
+        EventBus.on('SYS_SHOW_RATE', () => show_form());
+        EventBus.on('ON_APPLY_CUSTOM_LANG', () => Lang.apply());
+    }
     this.druid?.on_message(message_id, message, sender);
 }
 
