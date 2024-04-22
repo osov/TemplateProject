@@ -213,16 +213,16 @@ export function GoManager() {
 
     function on_click(x: number, y: number, isDown: boolean, isMove = false) {
         if (isMove) {
-            EventBus.trigger('MSG_ON_MOVE', { x, y });
+            EventBus.trigger('MSG_ON_MOVE', { x, y }, false);
             return on_move(x, y);
         }
         if (isDown) {
-            EventBus.trigger('MSG_ON_DOWN', { x, y });
+            EventBus.trigger('MSG_ON_DOWN', { x, y }), false;
             return on_down(x, y);
         }
         else {
             on_up(x, y);
-            EventBus.trigger('MSG_ON_UP', { x, y });
+            EventBus.trigger('MSG_ON_UP', { x, y }, false);
         }
     }
 
@@ -249,8 +249,8 @@ export function GoManager() {
             const item = items[i];
             hashes.push(item._hash);
         }
-        EventBus.trigger('MSG_ON_DOWN_HASHES', { hashes });
-        EventBus.trigger('MSG_ON_DOWN_ITEM', { item });
+        EventBus.trigger('MSG_ON_DOWN_HASHES', { hashes }, false);
+        EventBus.trigger('MSG_ON_DOWN_ITEM', { item }, false);
     }
 
     function on_move(x: number, y: number) {
@@ -267,7 +267,7 @@ export function GoManager() {
         const np = (sp + dp) as vmath.vector3;
         np.z = src.z;
         go.set_position(np, _hash);
-        EventBus.trigger('MSG_ON_MOVE_ITEM', { item: down_item });
+        EventBus.trigger('MSG_ON_MOVE_ITEM', { item: down_item }, false);
     }
 
     function on_up(x: number, y: number) {
@@ -282,13 +282,13 @@ export function GoManager() {
                 hashes.push(item._hash);
 
             }
-            EventBus.trigger('MSG_ON_UP_HASHES', { hashes });
+            EventBus.trigger('MSG_ON_UP_HASHES', { hashes }, false);
         }
 
         if (!down_item)
             return;
         const item = down_item;
-        EventBus.trigger('MSG_ON_UP_ITEM', { item });
+        EventBus.trigger('MSG_ON_UP_ITEM', { item }, false);
         down_item = null;
     }
 
@@ -413,7 +413,7 @@ export function GoManager() {
 
 
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    // 
+    //
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     function do_message(message_id: hash, message: any, sender: hash) {
@@ -434,7 +434,8 @@ export function GoManager() {
         do_message, on_click, make_go, set_render_order, get_render_order, do_move_anim, do_scale_anim, do_fade_anim, do_move_anim_hash, do_fade_anim_hash, do_scale_anim_hash,
         get_item_by_go, get_go_by_item, clear_and_remove_items, get_item_by_index, set_sprite_hash, set_color_hash, set_rotation_hash, add_game_item,
         move_to_with_speed_hash, move_to_with_speed, set_position_xy, set_position_xy_hash, is_intersect, is_intersect_hash, delete_item, delete_go, draw_debug_intersect, set_render_order_hash, get_render_order_hash,
-        move_to_with_time_hash, get_sprite_hash, start_dragging_list, stop_all_dragging, stop_dragging_list, reset_dragging_list
+        move_to_with_time_hash, get_sprite_hash, start_dragging_list, stop_all_dragging, stop_dragging_list, reset_dragging_list,
+        get_item_from_pos
     };
 }
 
