@@ -53,7 +53,7 @@ function ManagerModule()
                     timer.cancel(id_timer)
                     _is_ready = true
                     log("All Managers ready ver: " .. sys.get_config("project.version"))
-                    EventBus.trigger("ON_MANAGER_READY")
+                    msg.post("main:/rate#rate", "MANAGER_READY")
                     if callback_ready then
                         callback_ready()
                     end

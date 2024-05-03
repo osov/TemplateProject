@@ -117,8 +117,8 @@ function ____exports.GoManager()
                 i = i + 1
             end
         end
-        EventBus.trigger("MSG_ON_DOWN_HASHES", {hashes = hashes})
-        EventBus.trigger("MSG_ON_DOWN_ITEM", {item = item})
+        EventBus.trigger("MSG_ON_DOWN_HASHES", {hashes = hashes}, false)
+        EventBus.trigger("MSG_ON_DOWN_ITEM", {item = item}, false)
     end
     function on_move(x, y)
         cur_x = x
@@ -136,7 +136,7 @@ function ____exports.GoManager()
         local np = sp + dp
         np.z = src.z
         go.set_position(np, _hash)
-        EventBus.trigger("MSG_ON_MOVE_ITEM", {item = down_item})
+        EventBus.trigger("MSG_ON_MOVE_ITEM", {item = down_item}, false)
     end
     function on_up(x, y)
         cur_x = x
@@ -153,13 +153,13 @@ function ____exports.GoManager()
                     i = i + 1
                 end
             end
-            EventBus.trigger("MSG_ON_UP_HASHES", {hashes = hashes})
+            EventBus.trigger("MSG_ON_UP_HASHES", {hashes = hashes}, false)
         end
         if not down_item then
             return
         end
         local item = down_item
-        EventBus.trigger("MSG_ON_UP_ITEM", {item = item})
+        EventBus.trigger("MSG_ON_UP_ITEM", {item = item}, false)
         down_item = nil
     end
     function process_dragging_list(x, y)
@@ -256,9 +256,12 @@ function ____exports.GoManager()
             "animation"
         )
     end
-    local function set_sprite_hash(_go, id_anim)
+    local function set_sprite_hash(_go, id_anim, name_sprite)
+        if name_sprite == nil then
+            name_sprite = "sprite"
+        end
         sprite.play_flipbook(
-            msg.url(nil, _go, "sprite"),
+            msg.url(nil, _go, name_sprite),
             hash(id_anim)
         )
     end
@@ -455,15 +458,18 @@ function ____exports.GoManager()
             isMove = false
         end
         if isMove then
-            EventBus.trigger("MSG_ON_MOVE", {x = x, y = y})
+            EventBus.trigger("MSG_ON_MOVE", {x = x, y = y}, false)
             return on_move(x, y)
         end
         if isDown then
-            EventBus.trigger("MSG_ON_DOWN", {x = x, y = y})
+            do
+                EventBus.trigger("MSG_ON_DOWN", {x = x, y = y})
+                local ____ = false
+            end
             return on_down(x, y)
         else
             on_up(x, y)
-            EventBus.trigger("MSG_ON_UP", {x = x, y = y})
+            EventBus.trigger("MSG_ON_UP", {x = x, y = y}, false)
         end
     end
     cp = vmath.vector3()
@@ -660,7 +666,8 @@ function ____exports.GoManager()
         start_dragging_list = start_dragging_list,
         stop_all_dragging = stop_all_dragging,
         stop_dragging_list = stop_dragging_list,
-        reset_dragging_list = reset_dragging_list
+        reset_dragging_list = reset_dragging_list,
+        get_item_from_pos = get_item_from_pos
     }
 end
 return ____exports

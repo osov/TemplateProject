@@ -46,7 +46,6 @@ function StorageModule(file_key = 'sys_save_load') {
     function get_data(key: string) {
         if (_is_html5_storage && is_platform_storage) {
             const v = HtmlBridge.get_cached_key(key);
-            log('get_data', key, v);
             return v;
         }
 

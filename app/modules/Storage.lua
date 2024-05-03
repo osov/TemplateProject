@@ -26,7 +26,6 @@ function StorageModule(file_key)
     local function get_data(key)
         if _is_html5_storage and is_platform_storage then
             local v = HtmlBridge.get_cached_key(key)
-            log("get_data", key, v)
             return v
         end
         local filename = sys.get_save_file(file_key, key)
