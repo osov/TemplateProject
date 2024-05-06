@@ -13,14 +13,19 @@ function ____exports.init(self)
     EventBus.on(
         "MY_SHOW_HIDE_GO",
         function()
-            msg.post("/go", self.is_visible and "disable" or "enable")
             self.is_visible = not self.is_visible
-        end
+            msg.post("/go", self.is_visible and "enable" or "disable")
+        end,
+        true
     )
+end
+function ____exports.on_message(self, message_id, message, sender)
+    Manager.on_message(self, message_id, message, sender)
 end
 function ____exports.final(self)
     Manager.final_script()
 end
 init = ____exports.init
+on_message = ____exports.on_message
 final = ____exports.final
 

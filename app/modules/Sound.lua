@@ -2,21 +2,7 @@ local ____exports = {}
 local SoundModule
 local druid = require("druid.druid")
 function SoundModule()
-    local bind_messsages, is_active, set_active, play
-    function bind_messsages()
-        EventBus.on(
-            "SYS_STOP_SND",
-            function(message)
-                sound.stop("/sounds#" .. message.name)
-            end
-        )
-        EventBus.on(
-            "SYS_PLAY_SND",
-            function(message)
-                sound.play("/sounds#" .. message.name, {speed = message.speed, gain = message.volume})
-            end
-        )
-    end
+    local is_active, set_active, play
     function is_active()
         return Storage.get_bool("is_sound", true)
     end
@@ -31,14 +17,10 @@ function SoundModule()
         if volume == nil then
             volume = 1
         end
-        if not is_active() then
-            return
-        end
-        EventBus.trigger("SYS_PLAY_SND", {name = name, speed = speed, volume = volume})
+        Manager.send("SYS_PLAY_SND", {name = name, speed = speed, volume = volume})
     end
     local function init()
         set_active(is_active())
-        bind_messsages()
         play("empty")
     end
     local function attach_druid_click(name)
@@ -47,8 +29,18 @@ function SoundModule()
         end
         druid.set_sound_function(function() return play(name) end)
     end
+    local function _on_message(_this, message_id, _message, sender)
+        if message_id == to_hash("SYS_STOP_SND") then
+            local message = _message
+            sound.stop("/sounds#" .. message.name)
+        end
+        if message_id == to_hash("SYS_PLAY_SND") then
+            local message = _message
+            sound.play("/sounds#" .. message.name, {speed = message.speed, gain = message.volume})
+        end
+    end
     local function stop(name)
-        EventBus.trigger("SYS_STOP_SND", {name = name})
+        Manager.send("SYS_STOP_SND", {name = name})
     end
     local function set_pause(val)
         local scene_name = Scene.get_current_name()
@@ -62,6 +54,7 @@ function SoundModule()
     end
     init()
     return {
+        _on_message = _on_message,
         is_active = is_active,
         set_active = set_active,
         play = play,

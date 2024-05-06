@@ -25,6 +25,7 @@ export interface AdsResult { result: boolean }
 export interface ShowBannerData { pos: BannerPos }
 
 export type _SystemMessages = {
+    MANAGER_READY: VoidMessage,
     SYS_PLAY_SND: SndMessage,
     SYS_STOP_SND: NameMessage,
     ON_SOUND_PAUSE: ValMessage,

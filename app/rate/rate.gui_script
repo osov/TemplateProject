@@ -89,8 +89,8 @@ function mark_ok()
     end
 end
 local function init_gui(_this)
+    Manager.init_script()
     gui.set_render_order(10)
-    Lang.apply()
     hide_gui_list({"btnRate"})
     _this.rate_val = 0
     _this.druid = druid.new(_this)
@@ -136,9 +136,6 @@ local function init_gui(_this)
     )
 end
 function ____exports.on_input(self, action_id, action)
-    if not Manager then
-        return
-    end
     Camera.transform_input_action(action)
     local ____opt_0 = self.druid
     return ____opt_0 and ____opt_0:on_input(action_id, action)
@@ -150,17 +147,12 @@ function ____exports.update(self, dt)
     end
 end
 function ____exports.on_message(self, message_id, message, sender)
-    if message_id == hash("MANAGER_READY") then
+    if message_id == to_hash("MANAGER_READY") then
         init_gui(self)
         init_rate_info()
-        EventBus.on(
-            "SYS_SHOW_RATE",
-            function() return show_form() end
-        )
-        EventBus.on(
-            "ON_APPLY_CUSTOM_LANG",
-            function() return Lang.apply() end
-        )
+    end
+    if message_id == to_hash("SYS_SHOW_RATE") then
+        show_form()
     end
     local ____opt_4 = self.druid
     if ____opt_4 ~= nil then

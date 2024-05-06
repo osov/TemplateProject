@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
@@ -7,6 +8,7 @@ import * as druid from 'druid.druid';
 import * as checkbox from 'druid.extended.checkbox';
 import { ADS_CONFIG } from '../main/game_config';
 import { show_gui_list, hide_gui_list, set_text } from '../utils/utils';
+import * as flow from 'ludobits.m.flow';
 
 interface props {
     druid: DruidClass;
@@ -60,6 +62,7 @@ export function init(this: props): void {
     }
 }
 
+
 export function on_input(this: props, action_id: string | hash, action: unknown) {
     return this.druid.on_input(action_id, action);
 }
@@ -70,6 +73,7 @@ export function update(this: props, dt: number): void {
 
 export function on_message(this: props, message_id: string | hash, message: any, sender: string | hash | url): void {
     this.druid.on_message(message_id, message, sender);
+    flow.on_message(message_id, message, sender);
 }
 
 export function final(this: props): void {

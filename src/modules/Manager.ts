@@ -33,8 +33,12 @@ declare global {
     const ID_MESSAGES: typeof _ID_MESSAGES;
 }
 
+const hashed_keys: { [key: string]: hash } = {};
 function _to_hash<T extends MessageId>(key: T) {
-    return hash(key);
+    if (hashed_keys[key] != undefined)
+        return hashed_keys[key];
+    hashed_keys[key] = hash(key);
+    return hashed_keys[key];
 }
 
 export function register_manager() {
@@ -46,6 +50,10 @@ export function register_manager() {
 
 function ManagerModule() {
     let _is_ready = false;
+    const MANAGER_ID = 'main:/manager';
+    const UI_ID = '/ui#game';
+    const LOGIC_ID = '/game_logic#game';
+    const VIEW_ID = '/game_view#view';
 
     function init(callback_ready?: VoidCallback, use_custom_storage_key = false) {
         math.randomseed(socket.gettime());
@@ -82,7 +90,7 @@ function ManagerModule() {
                 timer.cancel(id_timer);
                 _is_ready = true;
                 log('All Managers ready ver: ' + sys.get_config("project.version"));
-                msg.post('main:/rate#rate', 'MANAGER_READY');
+                send('MANAGER_READY');
                 if (callback_ready)
                     callback_ready();
             }
@@ -93,8 +101,43 @@ function ManagerModule() {
         return _is_ready;
     }
 
+    // отправить сообщение
+    function send_raw(message_id: string | hash, message_data?: any, receiver = MANAGER_ID) {
+        msg.post(receiver, message_id, message_data);
+    }
+
+    function send_raw_ui(message_id: string | hash, message_data?: any, receiver = UI_ID) {
+        send_raw(message_id, message_data, receiver);
+    }
+
+    function send_raw_view(message_id: string | hash, message_data?: any, receiver = VIEW_ID) {
+        send_raw(message_id, message_data, receiver);
+    }
+
+    function send_view<T extends MessageId>(message_id: T, message_data?: Messages[T], receiver = VIEW_ID) {
+        send_raw(message_id, message_data, receiver);
+    }
+
+    function send_raw_game(message_id: string | hash, message_data?: any, receiver = LOGIC_ID) {
+        send_raw(message_id, message_data, receiver);
+    }
+
+    function send_game<T extends MessageId>(message_id: T, message_data?: Messages[T], receiver = LOGIC_ID) {
+        send_raw(message_id, message_data, receiver);
+    }
+
+    function send<T extends MessageId>(message_id: T, message_data?: Messages[T], receiver = MANAGER_ID) {
+        send_raw(message_id, message_data, receiver);
+    }
+
     function on_message(_this: any, message_id: hash, message: any, sender: hash) {
+        EventBus.on_message(_this, message_id, message, sender);
+    }
+
+    function on_message_main(_this: any, message_id: hash, message: any, sender: hash) {
         Scene._on_message(_this, message_id, message, sender);
+        Sound._on_message(_this, message_id, message, sender);
+        Rate._on_message(_this, message_id, message, sender);
     }
 
     // можно вызывать в каждом init всех gui/go чтобы применялись языки например
@@ -108,7 +151,10 @@ function ManagerModule() {
     }
 
 
-    return { init, on_message, is_ready, init_script, final_script };
+    return {
+        init, on_message_main, on_message, is_ready, init_script, final_script, send, send_raw, send_game, send_raw_game, send_view, send_raw_view, send_raw_ui,
+        MANAGER_ID, UI_ID, LOGIC_ID, VIEW_ID
+    };
 }
 
 

@@ -10,7 +10,11 @@ export function init(this: props) {
     EventBus.on('ON_REWARDED_SHOWN', (state) => label.set_text('/logic#label', 'Rewarded: ' + (state.result ? 'true' : 'false')));
     // user event from GUI
     this.is_visible = true;
-    EventBus.on('MY_SHOW_HIDE_GO', () => { msg.post('/go', this.is_visible ? 'disable' : 'enable'); this.is_visible = !this.is_visible; });
+    EventBus.on('MY_SHOW_HIDE_GO', () => { this.is_visible = !this.is_visible; msg.post('/go', this.is_visible ? 'enable' : 'disable'); }, true);
+}
+
+export function on_message(this: props, message_id: string | hash, message: any, sender: string | hash | url): void {
+    Manager.on_message(this, message_id, message, sender);
 }
 
 

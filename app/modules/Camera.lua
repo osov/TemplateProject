@@ -1,7 +1,7 @@
 local ____exports = {}
 local CameraModule
 function CameraModule()
-    local get_zoom, update_window_size, width_viewport, width_projection, get_viewport, unproject_xyz, unproject, screen_to_world, project, v4_tmp, DISPLAY_WIDTH, DISPLAY_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, _view_matrix, anchor_x, anchor_y, _zoom
+    local get_zoom, update_window_size, width_viewport, width_projection, get_viewport, unproject_xyz, unproject, screen_to_world, project, v4_tmp, DISPLAY_WIDTH, DISPLAY_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, _view_matrix, anchor_x, anchor_y, _near, _far, _zoom
     function get_zoom()
         return _zoom
     end
@@ -45,15 +45,15 @@ function CameraModule()
         end
         return {left, right, top, bottom}
     end
-    function width_projection(near, far)
+    function width_projection()
         local left, right, top, bottom = unpack(width_viewport())
         return vmath.matrix4_orthographic(
             left,
             right,
             bottom,
             top,
-            near,
-            far
+            _near,
+            _far
         )
     end
     function get_viewport()
@@ -88,7 +88,7 @@ function CameraModule()
         s.y = (s.y - viewport_bottom) * (DISPLAY_HEIGHT / viewport_height)
         return unproject(
             _view_matrix,
-            width_projection(-1, 1),
+            width_projection(),
             s
         )
     end
@@ -129,6 +129,8 @@ function CameraModule()
     _view_matrix = vmath.matrix4()
     anchor_x = 0
     anchor_y = 0
+    _near = -1
+    _far = 1
     _zoom = 1
     local function init()
         update_window_size()
@@ -161,10 +163,18 @@ function CameraModule()
             action.y = tp.y / stretch_y
         end
     end
-    local function set_go_prjection(ax, ay)
+    local function set_go_prjection(ax, ay, near, far)
+        if near == nil then
+            near = -1
+        end
+        if far == nil then
+            far = 1
+        end
         anchor_x = ax
         anchor_y = ay
-        msg.post("@render:", "use_width_projection", {anchor_x = anchor_x, anchor_y = anchor_y, near = -1, far = 1})
+        _near = near
+        _far = far
+        msg.post("@render:", "use_width_projection", {anchor_x = anchor_x, anchor_y = anchor_y, near = near, far = far})
         update_window_size()
     end
     local function set_zoom(zoom)
@@ -194,14 +204,14 @@ function CameraModule()
         screen.y = (screen.y - viewport_bottom) * (DISPLAY_HEIGHT / viewport_height)
         return unproject(
             _view_matrix,
-            width_projection(-1, 1),
+            width_projection(),
             screen
         )
     end
     local function world_to_window(world)
         local screen = project(
             _view_matrix,
-            width_projection(-1, 1),
+            width_projection(),
             vmath.vector3(world)
         )
         local scale_x = screen.x / (dpi_ratio * DISPLAY_WIDTH / WINDOW_WIDTH)
@@ -209,7 +219,7 @@ function CameraModule()
         return vmath.vector3(scale_x, scale_y, 0)
     end
     local function get_ltrb()
-        local inv = vmath.inv(width_projection(-1, 1) * _view_matrix)
+        local inv = vmath.inv(width_projection() * _view_matrix)
         local bl_x, bl_y = unpack(unproject_xyz(inv, 0, 0, 0))
         local br_x, br_y = unpack(unproject_xyz(inv, DISPLAY_WIDTH, 0, 0))
         local tl_x, tl_y = unpack(unproject_xyz(inv, 0, DISPLAY_HEIGHT, 0))

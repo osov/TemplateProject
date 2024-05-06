@@ -22,7 +22,6 @@ function SoundModule() {
 
     function init() {
         set_active(is_active());
-        bind_messsages();
         play('empty');
     }
 
@@ -30,13 +29,15 @@ function SoundModule() {
         druid.set_sound_function(() => play(name));
     }
 
-    function bind_messsages() {
-        EventBus.on('SYS_STOP_SND', (message) => {
+    function _on_message(_this: any, message_id: hash, _message: any, sender: hash) {
+        if (message_id == to_hash('SYS_STOP_SND')) {
+            const message = _message as Messages['SYS_STOP_SND'];
             sound.stop('/sounds#' + message.name);
-        });
-        EventBus.on('SYS_PLAY_SND', (message) => {
+        }
+        if (message_id == to_hash('SYS_PLAY_SND')) {
+            const message = _message as Messages['SYS_PLAY_SND'];
             sound.play('/sounds#' + message.name, { speed: message.speed, gain: message.volume });
-        });
+        }
     }
 
     function is_active() {
@@ -49,13 +50,11 @@ function SoundModule() {
     }
 
     function play(name: string, speed = 1, volume = 1) {
-        if (!is_active())
-            return;
-        EventBus.trigger('SYS_PLAY_SND', { name, speed, volume });
+        Manager.send('SYS_PLAY_SND', { name, speed, volume });
     }
 
     function stop(name: string) {
-        EventBus.trigger('SYS_STOP_SND', { name });
+        Manager.send('SYS_STOP_SND', { name });
     }
 
     function set_pause(val: boolean) {
@@ -67,7 +66,8 @@ function SoundModule() {
         sound.set_group_gain('master', val ? 0 : 1);
     }
 
+
     init();
 
-    return { is_active, set_active, play, stop, set_pause, attach_druid_click };
+    return { _on_message, is_active, set_active, play, stop, set_pause, attach_druid_click };
 }

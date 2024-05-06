@@ -45,7 +45,7 @@ function ____exports.init(self)
     )
 end
 function ____exports.on_message(self, message_id, _message, sender)
-    Manager.on_message(self, message_id, _message, sender)
+    Manager.on_message_main(self, message_id, _message, sender)
 end
 init = ____exports.init
 on_message = ____exports.on_message

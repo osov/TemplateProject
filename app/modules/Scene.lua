@@ -3,41 +3,14 @@ local SceneModule
 local ____utils = require("utils.utils")
 local hex2rgba = ____utils.hex2rgba
 function SceneModule()
-    local bind_messsages, last_loading_scene, last_scene, MANAGER_ID, is_restarting_scene
-    function bind_messsages()
-        EventBus.on(
-            "SYS_RESTART_SCENE",
-            function(message)
-                if last_scene == "" then
-                    return Log.warn("Сцена для перезагрузки не найдена")
-                end
-                local n = (MANAGER_ID .. "#") .. last_scene
-                msg.post(n, "disable")
-                msg.post(n, "final")
-                msg.post(n, "unload")
-                is_restarting_scene = true
-            end
-        )
-        EventBus.on(
-            "SYS_LOAD_SCENE",
-            function(message)
-                if not Manager.is_ready() then
-                    Log.error("Нельзя загрузить сцену, т.к. менеджер еще не готов")
-                    return
-                end
-                last_loading_scene = message.name
-                msg.post((MANAGER_ID .. "#") .. message.name, "load")
-            end
-        )
-    end
-    last_loading_scene = ""
-    last_scene = ""
-    MANAGER_ID = "main:/manager"
+    local wait_load_scene = ""
+    local last_loading_scene = ""
+    local last_scene = ""
+    local _wait_ready_manager = false
     local function init()
         if System.platform == "HTML5" then
             html5.run("window.set_light = function(val){document.body.style.backgroundColor = val}")
         end
-        bind_messsages()
     end
     local function set_bg(color)
         msg.post(
@@ -49,23 +22,53 @@ function SceneModule()
             html5.run(("set_light('" .. color) .. "')")
         end
     end
-    local function load(name)
-        EventBus.trigger("SYS_LOAD_SCENE", {name = name})
+    local function load(name, wait_ready_manager)
+        if wait_ready_manager == nil then
+            wait_ready_manager = false
+        end
+        _wait_ready_manager = wait_ready_manager
+        Manager.send("SYS_LOAD_SCENE", {name = name})
     end
     local function restart()
-        EventBus.trigger("SYS_RESTART_SCENE")
+        Manager.send("SYS_RESTART_SCENE")
     end
-    is_restarting_scene = false
+    local is_restarting_scene = false
     local function _on_message(_this, message_id, _message, sender)
+        if message_id == to_hash("MANAGER_READY") then
+            if wait_load_scene == "" then
+                return
+            end
+            Manager.send("SYS_LOAD_SCENE", {name = wait_load_scene})
+        end
+        if message_id == to_hash("SYS_RESTART_SCENE") then
+            if last_scene == "" then
+                return Log.warn("Сцена для перезагрузки не найдена")
+            end
+            local n = (Manager.MANAGER_ID .. "#") .. last_scene
+            msg.post(n, "disable")
+            msg.post(n, "final")
+            msg.post(n, "unload")
+            is_restarting_scene = true
+        end
+        if message_id == to_hash("SYS_LOAD_SCENE") then
+            local message = _message
+            if _wait_ready_manager and not Manager.is_ready() then
+                wait_load_scene = message.name
+                return
+            end
+            wait_load_scene = ""
+            last_loading_scene = message.name
+            msg.post((Manager.MANAGER_ID .. "#") .. message.name, "load")
+        end
         if message_id == hash("proxy_unloaded") then
             if is_restarting_scene and last_scene ~= "" then
                 last_loading_scene = last_scene
-                msg.post((MANAGER_ID .. "#") .. last_scene, "load")
+                msg.post((Manager.MANAGER_ID .. "#") .. last_scene, "load")
             end
         end
         if message_id == hash("proxy_loaded") then
             if last_scene ~= "" and not is_restarting_scene then
-                local n = (MANAGER_ID .. "#") .. last_scene
+                local n = (Manager.MANAGER_ID .. "#") .. last_scene
                 msg.post(n, "disable")
                 msg.post(n, "final")
                 msg.post(n, "unload")

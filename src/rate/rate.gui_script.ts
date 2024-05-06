@@ -14,8 +14,8 @@ interface props {
 let rate_log: typeof Log.log;
 
 function init_gui(_this: props): void {
+    Manager.init_script();
     gui.set_render_order(10);
-    Lang.apply();
     hide_gui_list(['btnRate']);
     _this.rate_val = 0;
     _this.druid = druid.new(_this);
@@ -38,10 +38,7 @@ function init_gui(_this: props): void {
     _this.druid.new_button('s4', () => show_rate(4, _this));
 }
 
-
 export function on_input(this: props, action_id: string | hash, action: unknown) {
-    if (!Manager)
-        return;
     Camera.transform_input_action(action);
     return this.druid?.on_input(action_id, action);
 }
@@ -51,12 +48,12 @@ export function update(this: props, dt: number): void {
 }
 
 export function on_message(this: props, message_id: string | hash, message: any, sender: string | hash | url): void {
-    if (message_id == hash('MANAGER_READY')) {
+    if (message_id == to_hash('MANAGER_READY')) {
         init_gui(this);
         init_rate_info();
-        EventBus.on('SYS_SHOW_RATE', () => show_form());
-        EventBus.on('ON_APPLY_CUSTOM_LANG', () => Lang.apply());
     }
+    if (message_id == to_hash('SYS_SHOW_RATE'))
+        show_form();
     this.druid?.on_message(message_id, message, sender);
 }
 

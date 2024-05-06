@@ -28,6 +28,8 @@ function CameraModule() {
     let _view_matrix = vmath.matrix4();
     let anchor_x = 0;
     let anchor_y = 0;
+    let _near = -1;
+    let _far = 1;
     let _zoom = 1;
 
     function init() {
@@ -61,10 +63,12 @@ function CameraModule() {
         }
     }
 
-    function set_go_prjection(ax: number, ay: number) {
+    function set_go_prjection(ax: number, ay: number, near = -1, far = 1) {
         anchor_x = ax;
         anchor_y = ay;
-        msg.post("@render:", "use_width_projection", { anchor_x, anchor_y, near: -1, far: 1 });
+        _near = near;
+        _far = far;
+        msg.post("@render:", "use_width_projection", { anchor_x, anchor_y, near, far });
         update_window_size();
     }
 
@@ -134,9 +138,9 @@ function CameraModule() {
         return [left, right, top, bottom];
     }
 
-    function width_projection(near: number, far: number) {
+    function width_projection() {
         const [left, right, top, bottom] = width_viewport();
-        return vmath.matrix4_orthographic(left, right, bottom, top, near, far);
+        return vmath.matrix4_orthographic(left, right, bottom, top, _near, _far);
     }
 
     function get_viewport() {
@@ -171,7 +175,7 @@ function CameraModule() {
         s.x = (s.x - viewport_left) * (DISPLAY_WIDTH / viewport_width);
         s.y = (s.y - viewport_bottom) * (DISPLAY_HEIGHT / viewport_height);
 
-        return unproject(_view_matrix, width_projection(-1, 1), s);
+        return unproject(_view_matrix, width_projection(), s);
     }
 
     function window_to_world(screen_x: number, screen_y: number) {
@@ -186,12 +190,12 @@ function CameraModule() {
         const screen = vmath.vector3(scale_x, scale_y, 0);
         screen.x = (screen.x - viewport_left) * (DISPLAY_WIDTH / viewport_width);
         screen.y = (screen.y - viewport_bottom) * (DISPLAY_HEIGHT / viewport_height);
-        return unproject(_view_matrix, width_projection(-1, 1), screen);
+        return unproject(_view_matrix, width_projection(), screen);
     }
 
     // -- Window coordinates are the non-scaled coordinates provided by action.screen_x and action.screen_y in on_input()
     function world_to_window(world: vmath.vector3) {
-        const screen = project(_view_matrix, width_projection(-1, 1), vmath.vector3(world));
+        const screen = project(_view_matrix, width_projection(), vmath.vector3(world));
         const scale_x = screen.x / (dpi_ratio * DISPLAY_WIDTH / WINDOW_WIDTH);
         const scale_y = screen.y / (dpi_ratio * DISPLAY_HEIGHT / WINDOW_HEIGHT);
         return vmath.vector3(scale_x, scale_y, 0);
@@ -208,7 +212,7 @@ function CameraModule() {
 
     // left top right bottom world coordinates in screen
     function get_ltrb() {
-        const inv = vmath.inv(width_projection(-1, 1) * _view_matrix as vmath.matrix4);
+        const inv = vmath.inv(width_projection() * _view_matrix as vmath.matrix4);
         const [bl_x, bl_y] = unproject_xyz(inv, 0, 0, 0);
         const [br_x, br_y] = unproject_xyz(inv, DISPLAY_WIDTH, 0, 0);
         const [tl_x, tl_y] = unproject_xyz(inv, 0, DISPLAY_HEIGHT, 0);

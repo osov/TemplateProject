@@ -31,7 +31,7 @@ local register_camera = ____Camera.register_camera
 local ____HtmlBridge = require("modules.HtmlBridge")
 local register_html_bridge = ____HtmlBridge.register_html_bridge
 function ManagerModule()
-    local register_modules, check_ready, _is_ready
+    local register_modules, check_ready, send_raw, send, _is_ready, MANAGER_ID
     function register_modules(callback_ready)
         register_metrica()
         register_sound()
@@ -53,7 +53,7 @@ function ManagerModule()
                     timer.cancel(id_timer)
                     _is_ready = true
                     log("All Managers ready ver: " .. sys.get_config("project.version"))
-                    msg.post("main:/rate#rate", "MANAGER_READY")
+                    send("MANAGER_READY")
                     if callback_ready then
                         callback_ready()
                     end
@@ -61,7 +61,23 @@ function ManagerModule()
             end
         )
     end
+    function send_raw(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = MANAGER_ID
+        end
+        msg.post(receiver, message_id, message_data)
+    end
+    function send(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = MANAGER_ID
+        end
+        send_raw(message_id, message_data, receiver)
+    end
     _is_ready = false
+    MANAGER_ID = "main:/manager"
+    local UI_ID = "/ui#game"
+    local LOGIC_ID = "/game_logic#game"
+    local VIEW_ID = "/game_view#view"
     local function init(callback_ready, use_custom_storage_key)
         if use_custom_storage_key == nil then
             use_custom_storage_key = false
@@ -82,8 +98,43 @@ function ManagerModule()
     local function is_ready()
         return _is_ready
     end
+    local function send_raw_ui(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = UI_ID
+        end
+        send_raw(message_id, message_data, receiver)
+    end
+    local function send_raw_view(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = VIEW_ID
+        end
+        send_raw(message_id, message_data, receiver)
+    end
+    local function send_view(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = VIEW_ID
+        end
+        send_raw(message_id, message_data, receiver)
+    end
+    local function send_raw_game(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = LOGIC_ID
+        end
+        send_raw(message_id, message_data, receiver)
+    end
+    local function send_game(message_id, message_data, receiver)
+        if receiver == nil then
+            receiver = LOGIC_ID
+        end
+        send_raw(message_id, message_data, receiver)
+    end
     local function on_message(_this, message_id, message, sender)
+        EventBus.on_message(_this, message_id, message, sender)
+    end
+    local function on_message_main(_this, message_id, message, sender)
         Scene._on_message(_this, message_id, message, sender)
+        Sound._on_message(_this, message_id, message, sender)
+        Rate._on_message(_this, message_id, message, sender)
     end
     local function init_script()
         Lang.apply()
@@ -97,14 +148,31 @@ function ManagerModule()
     end
     return {
         init = init,
+        on_message_main = on_message_main,
         on_message = on_message,
         is_ready = is_ready,
         init_script = init_script,
-        final_script = final_script
+        final_script = final_script,
+        send = send,
+        send_raw = send_raw,
+        send_game = send_game,
+        send_raw_game = send_raw_game,
+        send_view = send_view,
+        send_raw_view = send_raw_view,
+        send_raw_ui = send_raw_ui,
+        MANAGER_ID = MANAGER_ID,
+        UI_ID = UI_ID,
+        LOGIC_ID = LOGIC_ID,
+        VIEW_ID = VIEW_ID
     }
 end
+local hashed_keys = {}
 local function _to_hash(key)
-    return hash(key)
+    if hashed_keys[key] ~= nil then
+        return hashed_keys[key]
+    end
+    hashed_keys[key] = hash(key)
+    return hashed_keys[key]
 end
 function ____exports.register_manager()
     _G.Manager = ManagerModule()

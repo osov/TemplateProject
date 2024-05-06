@@ -18,6 +18,7 @@ export function init(this: props) {
     msg.post('.', 'acquire_input_focus');
     register_manager();
     Manager.init(() => {
+
         EventBus.on('SYS_LOAD_SCENE', (message) => {
             const name = message.name;
             window.set_dim_mode(name.includes('game') ? window.DIMMING_OFF : window.DIMMING_ON);
@@ -43,5 +44,5 @@ export function init(this: props) {
 
 
 export function on_message(this: props, message_id: hash, _message: any, sender: hash): void {
-    Manager.on_message(this, message_id, _message, sender);
+    Manager.on_message_main(this, message_id, _message, sender);
 }

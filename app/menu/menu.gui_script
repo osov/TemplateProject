@@ -7,6 +7,7 @@ local ____utils = require("utils.utils")
 local show_gui_list = ____utils.show_gui_list
 local hide_gui_list = ____utils.hide_gui_list
 local set_text = ____utils.set_text
+local flow = require("ludobits.m.flow")
 function ____exports.init(self)
     Manager.init_script()
     druid.register("checkbox", checkbox)
@@ -95,6 +96,7 @@ function ____exports.update(self, dt)
 end
 function ____exports.on_message(self, message_id, message, sender)
     self.druid:on_message(message_id, message, sender)
+    flow.on_message(message_id, message, sender)
 end
 function ____exports.final(self)
     Manager.final_script()
