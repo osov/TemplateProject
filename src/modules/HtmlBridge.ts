@@ -66,7 +66,7 @@ function HtmlBridgeModule() {
     }
 
     function get_platform_device() {
-        return js.call_js('sdk.get_platform_device') as 'android' | 'ios' | 'mobile-web' | 'web';
+        return js.call_js('sdk.get_platform_device') as 'android' | 'ios' | 'pc';
     }
 
     function get_platform_tld() {

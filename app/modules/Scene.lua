@@ -79,6 +79,7 @@ function SceneModule()
             msg.post(sender, "enable")
             last_scene = last_loading_scene
             last_loading_scene = ""
+            EventBus.trigger("ON_SCENE_LOADED", {name = last_scene}, false)
         end
     end
     local function get_current_name()

@@ -148,7 +148,7 @@ function EventBusModule()
             show_warning = true
         end
         if is_copy_data == nil then
-            is_copy_data = true
+            is_copy_data = false
         end
         local key_message = ensure_hash(id_message)
         if not listeners[key_message] then

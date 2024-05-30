@@ -13,7 +13,7 @@ function ____exports.init(self)
     Manager.init(
         function()
             EventBus.on(
-                "SYS_LOAD_SCENE",
+                "ON_SCENE_LOADED",
                 function(message)
                     local name = message.name
                     local ____window_set_dim_mode_1 = window.set_dim_mode
