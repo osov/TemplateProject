@@ -155,6 +155,10 @@ function HtmlBridgeModule() {
         js.call_js_with_static_callback('sdk.bind_rewarded_events', {}, cb);
     }
 
+    function open_url(url: string) {
+        js.call_js('window.open', url, '_blank');
+    }
+
 
     return {
         init, get_data_from_storage, set_data_to_storage, show_banner, hide_banner, show_interstitial, show_rewarded,
@@ -162,6 +166,6 @@ function HtmlBridgeModule() {
         bind_visible_state, bind_interstitial_events, bind_banner_events, bind_rewarded_events,
         get_language, get_payload, is_favorite_supported, is_share_supported, is_player_authorized,
         player_id, player_name, player_photos, share, rate, add_to_favorites, has_ad_block,
-        set_leaderboard_score, get_leaderboard_score, get_leaderboard_entries,
+        set_leaderboard_score, get_leaderboard_score, get_leaderboard_entries, open_url
     };
 }

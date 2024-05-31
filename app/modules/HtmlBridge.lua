@@ -108,6 +108,9 @@ function HtmlBridgeModule()
     local function bind_rewarded_events(cb)
         js.call_js_with_static_callback("sdk.bind_rewarded_events", {}, cb)
     end
+    local function open_url(url)
+        js.call_js("window.open", url, "_blank")
+    end
     return {
         init = init,
         get_data_from_storage = get_data_from_storage,
@@ -140,7 +143,8 @@ function HtmlBridgeModule()
         has_ad_block = has_ad_block,
         set_leaderboard_score = set_leaderboard_score,
         get_leaderboard_score = get_leaderboard_score,
-        get_leaderboard_entries = get_leaderboard_entries
+        get_leaderboard_entries = get_leaderboard_entries,
+        open_url = open_url
     }
 end
 function ____exports.register_html_bridge()
