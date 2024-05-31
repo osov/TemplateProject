@@ -14,7 +14,7 @@ function ____exports.init(self)
     self.druid = druid.new(self)
     self.druid:new_button(
         "btnAds",
-        function() return Scene.load("game") end
+        function() return Scene.load("ads") end
     )
     self.druid:new_button(
         "btnRu",

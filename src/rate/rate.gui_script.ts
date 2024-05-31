@@ -9,6 +9,7 @@ import { hide_gui_list, show_gui_list } from '../utils/utils';
 interface props {
     druid: DruidClass;
     rate_val: number;
+    is_ready: boolean;
 }
 
 let rate_log: typeof Log.log;
@@ -17,6 +18,7 @@ function init_gui(_this: props): void {
     Manager.init_script();
     gui.set_render_order(10);
     hide_gui_list(['btnRate']);
+    _this.is_ready = true;
     _this.rate_val = 0;
     _this.druid = druid.new(_this);
 

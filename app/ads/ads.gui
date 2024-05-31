@@ -1,4 +1,4 @@
-script: "/game/game.gui_script"
+script: "/ads/ads.gui_script"
 fonts {
   name: "myFont"
   font: "/assets/myFont.font"
