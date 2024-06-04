@@ -732,7 +732,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "\320\245\320\276\320\264: -"
+  text: ""
   font: "myFont"
   id: "step"
   xanchor: XANCHOR_NONE
