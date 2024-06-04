@@ -20,6 +20,7 @@ export function init(this: props): void {
     druid.register("checkbox", checkbox);
     this.druid = druid.new(this);
 
+    this.druid.new_button('btnTicTac', () => Scene.load('tic_tac'));
     this.druid.new_button('btnAds', () => Scene.load('ads'));
     this.druid.new_button('btnRu', () => Lang.set_custom_lang('ru'));
     this.druid.new_button('btnEn', () => Lang.set_custom_lang('en'));

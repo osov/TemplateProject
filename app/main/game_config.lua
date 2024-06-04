@@ -22,4 +22,11 @@ ____exports.RATE_FIRST_SHOW = 24 * 60 * 60
 ____exports.RATE_SECOND_SHOW = 3 * 24 * 60 * 60
 ____exports._GAME_CONFIG = {}
 ____exports._STORAGE_CONFIG = {}
+____exports.StepMode = StepMode or ({})
+____exports.StepMode.NONE = 0
+____exports.StepMode[____exports.StepMode.NONE] = "NONE"
+____exports.StepMode.X = 1
+____exports.StepMode[____exports.StepMode.X] = "X"
+____exports.StepMode.O = 2
+____exports.StepMode[____exports.StepMode.O] = "O"
 return ____exports

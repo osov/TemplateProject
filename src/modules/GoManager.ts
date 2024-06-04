@@ -217,7 +217,7 @@ export function GoManager() {
             return on_move(x, y);
         }
         if (isDown) {
-            EventBus.trigger('MSG_ON_DOWN', { x, y }), false;
+            EventBus.trigger('MSG_ON_DOWN', { x, y }, false);
             return on_down(x, y);
         }
         else {
@@ -416,7 +416,7 @@ export function GoManager() {
     //
     // ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    function do_message(message_id: hash, message: any, sender: hash) {
+    function do_message(message_id: hash, message: any) {
         if (message_id == ID_MESSAGES.MSG_TOUCH) {
             if (message.pressed)
                 on_click(message.x, message.y, true);

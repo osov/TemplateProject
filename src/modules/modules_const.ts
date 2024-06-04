@@ -54,6 +54,7 @@ export type _SystemMessages = {
 
 export const _ID_MESSAGES = {
     MSG_LAYOUT_CHANGED: hash('layout_changed'),
+    MSG_INPUT_FOCUS: hash('acquire_input_focus'),
     MSG_TOUCH: hash('touch'),
     MSG_ON_MOVE: hash('MSG_ON_MOVE'),
     MSG_ON_DOWN: hash('MSG_ON_DOWN'),

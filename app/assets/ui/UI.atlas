@@ -46,6 +46,10 @@ images {
   image: "/assets/ui/cir_b.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
+images {
+  image: "/assets/ui/32.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
 margin: 1
 extrude_borders: 0
 inner_padding: 1

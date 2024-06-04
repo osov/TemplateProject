@@ -37,8 +37,29 @@ export const _STORAGE_CONFIG = {
 
 };
 
+interface IGameSize {
+    size: number;
+}
+
+interface IGameStep {
+    is_x: boolean;
+    x: number;
+    y: number;
+}
+
+export enum StepMode {
+    NONE,
+    X,
+    O
+}
 
 // пользовательские сообщения под конкретный проект, доступны типы через глобальную тип-переменную UserMessages
 export type _UserMessages = {
-    MY_SHOW_HIDE_GO: {}
+    MY_SHOW_HIDE_GO: {},
+    START_GAME: IGameSize
+    INIT_VIEW: IGameSize
+    ON_STEP: IGameStep
+    DRAW_STEP: IGameStep
+    CURRENT_STEP: { step: StepMode }
+    END_GAME: { is_win: boolean; is_x: boolean; win_cells: number[]; }
 };

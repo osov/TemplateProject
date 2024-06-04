@@ -1,0 +1,27 @@
+local ____exports = {}
+local ____GameLogic = require("tic_tac.GameLogic")
+local GameLogic = ____GameLogic.GameLogic
+local ____GameVIew = require("tic_tac.GameVIew")
+local GameView = ____GameVIew.GameView
+function ____exports.init(self)
+    Manager.init_script()
+    msg.post(".", ID_MESSAGES.MSG_INPUT_FOCUS)
+    self.logic = GameLogic()
+    self.view = GameView()
+    self.logic.init()
+    self.view.init()
+end
+function ____exports.on_message(self, message_id, message, sender)
+    Manager.on_message(self, message_id, message, sender)
+end
+function ____exports.on_input(self, action_id, action)
+    self.view.on_input(action_id, action)
+end
+function ____exports.final(self)
+    Manager.final_script()
+end
+init = ____exports.init
+on_message = ____exports.on_message
+on_input = ____exports.on_input
+final = ____exports.final
+

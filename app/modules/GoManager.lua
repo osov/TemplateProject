@@ -462,10 +462,7 @@ function ____exports.GoManager()
             return on_move(x, y)
         end
         if isDown then
-            do
-                EventBus.trigger("MSG_ON_DOWN", {x = x, y = y})
-                local ____ = false
-            end
+            EventBus.trigger("MSG_ON_DOWN", {x = x, y = y}, false)
             return on_down(x, y)
         else
             on_up(x, y)
@@ -619,7 +616,7 @@ function ____exports.GoManager()
             end
         end
     end
-    local function do_message(message_id, message, sender)
+    local function do_message(message_id, message)
         if message_id == ID_MESSAGES.MSG_TOUCH then
             if message.pressed then
                 on_click(message.x, message.y, true)

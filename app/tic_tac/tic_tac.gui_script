@@ -1,0 +1,74 @@
+local ____exports = {}
+local druid = require("druid.druid")
+local ____game_config = require("main.game_config")
+local StepMode = ____game_config.StepMode
+local ____utils = require("utils.utils")
+local hide_gui_list = ____utils.hide_gui_list
+local set_text = ____utils.set_text
+local show_gui_list = ____utils.show_gui_list
+local function start_game(size)
+    hide_gui_list({"popup_start_game"})
+    EventBus.trigger("START_GAME", {size = size})
+end
+function ____exports.init(self)
+    Manager.init_script()
+    self.druid = druid.new(self)
+    self.druid:new_button(
+        "btnHome",
+        function() return Scene.load("menu") end
+    )
+    self.druid:new_button(
+        "box_3",
+        function() return start_game(3) end
+    )
+    self.druid:new_button(
+        "box_4",
+        function() return start_game(4) end
+    )
+    self.druid:new_button(
+        "box_5",
+        function() return start_game(5) end
+    )
+    self.druid:new_button(
+        "btn_restart",
+        function() return Scene.restart() end
+    )
+    EventBus.on(
+        "CURRENT_STEP",
+        function(e) return set_text("step", "Ход: " .. (e.step == StepMode.X and "X" or (e.step == StepMode.O and "O" or "-"))) end
+    )
+    EventBus.on(
+        "END_GAME",
+        function(e)
+            timer.delay(
+                1,
+                false,
+                function() return show_gui_list({"popup_end_game"}) end
+            )
+            if not e.is_win then
+                set_text("game_text", "Ничья")
+            else
+                set_text("game_text", e.is_x and "Вы победили" or "Вы проиграли")
+            end
+        end
+    )
+end
+function ____exports.on_input(self, action_id, action)
+    return self.druid:on_input(action_id, action)
+end
+function ____exports.update(self, dt)
+    self.druid:update(dt)
+end
+function ____exports.on_message(self, message_id, message, sender)
+    self.druid:on_message(message_id, message, sender)
+end
+function ____exports.final(self)
+    Manager.final_script()
+    self.druid:final()
+end
+init = ____exports.init
+on_input = ____exports.on_input
+update = ____exports.update
+on_message = ____exports.on_message
+final = ____exports.final
+

@@ -30,5 +30,9 @@ export const lang_data = {
     "hide_banner": {
         "Русский-ru": "скрыть баннер",
         "Английский-en": "hide banner"
+    },
+    "tic_tac": {
+        "Русский-ru": "Крестики-нолики",
+        "Английский-en": "Tic-Tac-Toe"
     }
 };
