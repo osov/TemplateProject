@@ -17,6 +17,10 @@ function ____exports.init(self)
         function() return Scene.load("tic_tac") end
     )
     self.druid:new_button(
+        "btnProjection",
+        function() return Scene.load("projection") end
+    )
+    self.druid:new_button(
         "btnAds",
         function() return Scene.load("ads") end
     )

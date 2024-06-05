@@ -1,0 +1,87 @@
+local ____exports = {}
+local ____utils = require("utils.utils")
+local hex2rgba = ____utils.hex2rgba
+function ____exports.init(self)
+    Manager.init_script()
+    msg.post(".", ID_MESSAGES.MSG_INPUT_FOCUS)
+    EventBus.on(
+        "SYS_ON_RESIZED",
+        function(e)
+            local ltrb = Camera.get_ltrb()
+            local width = 540
+            local offset = 10
+            go.set_position(
+                vmath.vector3(width / 2, -offset, 0),
+                "top_base"
+            )
+            go.set_position(
+                vmath.vector3(width / 2, ltrb.w / 2 + offset, 0),
+                "center_base"
+            )
+            go.set_position(
+                vmath.vector3(0, ltrb.w / 2 + offset, 0),
+                "left_base"
+            )
+            go.set_position(
+                vmath.vector3(width, ltrb.w / 2 + offset, 0),
+                "right_base"
+            )
+            go.set_position(
+                vmath.vector3(width / 2, ltrb.w + offset, 0),
+                "bottom_base"
+            )
+            go.set_position(
+                vmath.vector3((ltrb.x + ltrb.z) / 2, 0, 0),
+                "top_real"
+            )
+            go.set_position(
+                vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w / 2, 0),
+                "center_real"
+            )
+            go.set_position(
+                vmath.vector3(ltrb.x, ltrb.w / 2, 0),
+                "left_real"
+            )
+            go.set_position(
+                vmath.vector3(ltrb.z, ltrb.w / 2, 0),
+                "right_real"
+            )
+            go.set_position(
+                vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w, 0),
+                "bottom_real"
+            )
+        end
+    )
+end
+function ____exports.on_input(self, action_id, action)
+    if action_id == ID_MESSAGES.MSG_TOUCH then
+        if action.pressed then
+            local cp = Camera.screen_to_world(action.x, action.y)
+            local gp = go.get_position("click_go")
+            local size = 25
+            if math.abs(cp.x - gp.x) < size and math.abs(cp.y - gp.y) < size then
+                go.set(
+                    msg.url(nil, "click_go", "sprite"),
+                    "tint",
+                    hex2rgba("#f00")
+                )
+                timer.delay(
+                    0.3,
+                    false,
+                    function() return go.set(
+                        msg.url(nil, "click_go", "sprite"),
+                        "tint",
+                        hex2rgba("#fff")
+                    ) end
+                )
+            end
+        end
+    end
+end
+function ____exports.final(self)
+    Manager.final_script()
+end
+init = ____exports.init
+on_input = ____exports.on_input
+final = ____exports.final
+

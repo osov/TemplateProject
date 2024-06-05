@@ -8,6 +8,7 @@ ____exports.lang_data = {
     reward = {["Русский-ru"] = "показать ревард", ["Английский-en"] = "show reward"},
     show_banner = {["Русский-ru"] = "показать баннер", ["Английский-en"] = "show banner"},
     hide_banner = {["Русский-ru"] = "скрыть баннер", ["Английский-en"] = "hide banner"},
-    tic_tac = {["Русский-ru"] = "Крестики-нолики", ["Английский-en"] = "Tic-Tac-Toe"}
+    tic_tac = {["Русский-ru"] = "Крестики-нолики", ["Английский-en"] = "Tic-Tac-Toe"},
+    projection = {["Русский-ru"] = "Проекция", ["Английский-en"] = "Projection"}
 }
 return ____exports

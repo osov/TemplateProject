@@ -1,0 +1,58 @@
+local ____exports = {}
+local druid = require("druid.druid")
+local ____utils = require("utils.utils")
+local set_text = ____utils.set_text
+function ____exports.init(self)
+    Manager.init_script()
+    self.druid = druid.new(self)
+    self.druid:new_button(
+        "btnHome",
+        function() return Scene.load("menu") end
+    )
+    set_text(
+        "proj",
+        (Lang.get_text("projection") .. ":\n") .. tostring(Camera.get_width_range())
+    )
+    local width = tonumber(sys.get_config("display.width"))
+    self.druid:new_button(
+        "btnAdd",
+        function()
+            width = width + 100
+            Camera.set_width_range(width)
+            set_text(
+                "proj",
+                (Lang.get_text("projection") .. ":\n") .. tostring(width)
+            )
+        end
+    )
+    self.druid:new_button(
+        "btnSub",
+        function()
+            width = width - 100
+            Camera.set_width_range(width)
+            set_text(
+                "proj",
+                (Lang.get_text("projection") .. ":\n") .. tostring(width)
+            )
+        end
+    )
+end
+function ____exports.on_input(self, action_id, action)
+    return self.druid:on_input(action_id, action)
+end
+function ____exports.update(self, dt)
+    self.druid:update(dt)
+end
+function ____exports.on_message(self, message_id, message, sender)
+    self.druid:on_message(message_id, message, sender)
+end
+function ____exports.final(self)
+    Manager.final_script()
+    self.druid:final()
+end
+init = ____exports.init
+on_input = ____exports.on_input
+update = ____exports.update
+on_message = ____exports.on_message
+final = ____exports.final
+

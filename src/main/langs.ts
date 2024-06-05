@@ -34,5 +34,9 @@ export const lang_data = {
     "tic_tac": {
         "Русский-ru": "Крестики-нолики",
         "Английский-en": "Tic-Tac-Toe"
+    },
+    "projection": {
+        "Русский-ru": "Проекция",
+        "Английский-en": "Projection"
     }
 };

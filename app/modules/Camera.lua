@@ -1,7 +1,7 @@
 local ____exports = {}
 local CameraModule
 function CameraModule()
-    local get_zoom, update_window_size, width_viewport, width_projection, get_viewport, unproject_xyz, unproject, screen_to_world, project, v4_tmp, DISPLAY_WIDTH, DISPLAY_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, _view_matrix, anchor_x, anchor_y, _near, _far, _zoom
+    local get_zoom, update_window_size, width_viewport, width_projection, get_viewport, unproject_xyz, unproject, screen_to_world, project, v4_tmp, DISPLAY_WIDTH, DISPLAY_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, _view_matrix, anchor_x, anchor_y, _near, _far, _zoom, _game_width
     function get_zoom()
         return _zoom
     end
@@ -15,18 +15,16 @@ function CameraModule()
         end
         WINDOW_WIDTH = width
         WINDOW_HEIGHT = height
+        EventBus.trigger("SYS_ON_RESIZED", {width = width, height = height}, false)
     end
     function width_viewport()
-        local width = DISPLAY_WIDTH / get_zoom()
-        local height = DISPLAY_HEIGHT
-        local wr = WINDOW_WIDTH / width
-        local sh = WINDOW_HEIGHT / wr
-        local w = width
-        local h = sh
+        local w = _game_width / get_zoom()
+        local h = WINDOW_HEIGHT / WINDOW_WIDTH * w
         local left = -w / 2
         local right = w / 2
         local bottom = -h / 2
         local top = h / 2
+        local left_x = (DISPLAY_WIDTH - w) / 2
         if anchor_y == 1 then
             bottom = -h
             top = 0
@@ -36,8 +34,8 @@ function CameraModule()
             top = h
         end
         if anchor_x == -1 then
-            left = 0
-            right = w
+            left = left_x
+            right = w + left_x
         end
         if anchor_x == 1 then
             left = -w
@@ -132,6 +130,7 @@ function CameraModule()
     _near = -1
     _far = 1
     _zoom = 1
+    _game_width = DISPLAY_WIDTH
     local function init()
         update_window_size()
         local last_window_x = 0
@@ -176,6 +175,14 @@ function CameraModule()
         _far = far
         msg.post("@render:", "use_width_projection", {anchor_x = anchor_x, anchor_y = anchor_y, near = near, far = far})
         update_window_size()
+    end
+    local function set_width_range(value)
+        _game_width = value
+        WINDOW_WIDTH = 1
+        update_window_size()
+    end
+    local function get_width_range()
+        return _game_width
     end
     local function set_zoom(zoom)
         _zoom = zoom
@@ -236,7 +243,10 @@ function CameraModule()
         get_zoom = get_zoom,
         set_zoom = set_zoom,
         set_view = set_view,
-        world_to_window = world_to_window
+        world_to_window = world_to_window,
+        width_projection = width_projection,
+        set_width_range = set_width_range,
+        get_width_range = get_width_range
     }
 end
 function ____exports.register_camera()

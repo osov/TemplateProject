@@ -38,6 +38,7 @@ export type _SystemMessages = {
     SYS_SHOW_INTER: InterMessage,
     SYS_SHOW_BANNER: ShowBannerData,
     SYS_HIDE_BANNER: VoidMessage,
+    SYS_ON_RESIZED: { width: number, height: number },
 
     ON_INTER_SHOWN: AdsResult,
     ON_REWARDED_SHOWN: AdsResult,
