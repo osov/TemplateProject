@@ -10,28 +10,25 @@ interface props {
 export function init(this: props): void {
     Manager.init_script();
     msg.post('.', ID_MESSAGES.MSG_INPUT_FOCUS);
-    EventBus.on('SYS_ON_RESIZED', (e) => {
-        const ltrb = Camera.get_ltrb();
-        const width = 540;
-        const offset = 10;
-        go.set_position(vmath.vector3(width / 2, -offset, 0), 'top_base');
-        go.set_position(vmath.vector3(width / 2, ltrb.w / 2 + offset, 0), 'center_base');
-        go.set_position(vmath.vector3(0, ltrb.w / 2 + offset, 0), 'left_base');
-        go.set_position(vmath.vector3(width, ltrb.w / 2 + offset, 0), 'right_base');
-        go.set_position(vmath.vector3(width / 2, ltrb.w + offset, 0), 'bottom_base');
+    EventBus.on('SYS_ON_RESIZED', update_ui);
+    update_ui();
+    Camera.set_dynamic_orientation(true);
+}
 
-        // если захотим поставить под низ надписей left/right
-        //go.set_position(vmath.vector3(0, ltrb.w / 2 - offset, 0), 'test_go1');
-        //go.set_position(vmath.vector3(width, ltrb.w / 2 - offset, 0), 'test_go2');
-
-        go.set_position(vmath.vector3((ltrb.x + ltrb.z) / 2, 0, 0), 'top_real');
-        go.set_position(vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w / 2, 0), 'center_real');
-        go.set_position(vmath.vector3(ltrb.x, ltrb.w / 2, 0), 'left_real');
-        go.set_position(vmath.vector3(ltrb.z, ltrb.w / 2, 0), 'right_real');
-        go.set_position(vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w, 0), 'bottom_real');
+function update_ui() {
+    const [window_x, window_y] = window.get_size();
+    const is_portrait = window_x < window_y || !Camera.is_dynamic_orientation();
+    go.set_position(vmath.vector3(!is_portrait ? 0 : 10000, -540, 0), 'pivots_landscape');
+    go.set_position(vmath.vector3(is_portrait ? 0 : 10000, -480, 0), 'pivots_portrait');
+    go.set_position(vmath.vector3(is_portrait ? 540 : 960, -175, 0), 'test_go2');
 
 
-    });
+    const ltrb = Camera.get_ltrb();
+    go.set_position(vmath.vector3((ltrb.x + ltrb.z) / 2, 0, 0), 'top_real');
+    go.set_position(vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w / 2, 0), 'center_real');
+    go.set_position(vmath.vector3(ltrb.x, ltrb.w / 2, 0), 'left_real');
+    go.set_position(vmath.vector3(ltrb.z, ltrb.w / 2, 0), 'right_real');
+    go.set_position(vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w, 0), 'bottom_real');
 }
 
 

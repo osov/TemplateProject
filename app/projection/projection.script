@@ -1,57 +1,50 @@
 local ____exports = {}
+local update_ui
 local ____utils = require("utils.utils")
 local hex2rgba = ____utils.hex2rgba
+function update_ui()
+    local window_x, window_y = window.get_size()
+    local is_portrait = window_x < window_y or not Camera.is_dynamic_orientation()
+    go.set_position(
+        vmath.vector3(not is_portrait and 0 or 10000, -540, 0),
+        "pivots_landscape"
+    )
+    go.set_position(
+        vmath.vector3(is_portrait and 0 or 10000, -480, 0),
+        "pivots_portrait"
+    )
+    go.set_position(
+        vmath.vector3(is_portrait and 540 or 960, -175, 0),
+        "test_go2"
+    )
+    local ltrb = Camera.get_ltrb()
+    go.set_position(
+        vmath.vector3((ltrb.x + ltrb.z) / 2, 0, 0),
+        "top_real"
+    )
+    go.set_position(
+        vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w / 2, 0),
+        "center_real"
+    )
+    go.set_position(
+        vmath.vector3(ltrb.x, ltrb.w / 2, 0),
+        "left_real"
+    )
+    go.set_position(
+        vmath.vector3(ltrb.z, ltrb.w / 2, 0),
+        "right_real"
+    )
+    go.set_position(
+        vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w, 0),
+        "bottom_real"
+    )
+end
 function ____exports.init(self)
     Manager.init_script()
     msg.post(".", ID_MESSAGES.MSG_INPUT_FOCUS)
-    EventBus.on(
-        "SYS_ON_RESIZED",
-        function(e)
-            local ltrb = Camera.get_ltrb()
-            local width = 540
-            local offset = 10
-            go.set_position(
-                vmath.vector3(width / 2, -offset, 0),
-                "top_base"
-            )
-            go.set_position(
-                vmath.vector3(width / 2, ltrb.w / 2 + offset, 0),
-                "center_base"
-            )
-            go.set_position(
-                vmath.vector3(0, ltrb.w / 2 + offset, 0),
-                "left_base"
-            )
-            go.set_position(
-                vmath.vector3(width, ltrb.w / 2 + offset, 0),
-                "right_base"
-            )
-            go.set_position(
-                vmath.vector3(width / 2, ltrb.w + offset, 0),
-                "bottom_base"
-            )
-            go.set_position(
-                vmath.vector3((ltrb.x + ltrb.z) / 2, 0, 0),
-                "top_real"
-            )
-            go.set_position(
-                vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w / 2, 0),
-                "center_real"
-            )
-            go.set_position(
-                vmath.vector3(ltrb.x, ltrb.w / 2, 0),
-                "left_real"
-            )
-            go.set_position(
-                vmath.vector3(ltrb.z, ltrb.w / 2, 0),
-                "right_real"
-            )
-            go.set_position(
-                vmath.vector3((ltrb.x + ltrb.z) / 2, ltrb.w, 0),
-                "bottom_real"
-            )
-        end
-    )
+    EventBus.on("SYS_ON_RESIZED", update_ui)
+    update_ui()
+    Camera.set_dynamic_orientation(true)
 end
 function ____exports.on_input(self, action_id, action)
     if action_id == ID_MESSAGES.MSG_TOUCH then

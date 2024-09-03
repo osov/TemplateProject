@@ -15,11 +15,14 @@ export function init(this: props): void {
     Manager.init_script();
     this.druid = druid.new(this);
     this.druid.new_button('btnHome', () => Scene.load('menu'));
+    EventBus.on('SYS_ON_RESIZED', update_projection);
+    update_projection();
+}
 
-    set_text('proj', Lang.get_text('projection') + ':\n' + Camera.get_width_range());
-    let width = tonumber(sys.get_config("display.width"))!;
-    this.druid.new_button('btnAdd', () => { width += 100; Camera.set_width_range(width); set_text('proj', Lang.get_text('projection') + ':\n' + width); });
-    this.druid.new_button('btnSub', () => { width -= 100; Camera.set_width_range(width); set_text('proj', Lang.get_text('projection') + ':\n' + width); });
+function update_projection() {
+    const [window_x, window_y] = window.get_size();
+    const is_portrait = window_x < window_y || !Camera.is_dynamic_orientation();
+    set_text('proj', Lang.get_text('projection') + ':\n' + (is_portrait ? 'portrait' : 'landscape'));
 }
 
 

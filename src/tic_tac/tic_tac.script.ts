@@ -16,6 +16,7 @@ export function init(this: props) {
     this.view = GameView();
     this.logic.init();
     this.view.init();
+    Camera.set_dynamic_orientation(false);
 }
 
 export function on_message(this: props, message_id: string | hash, message: any, sender: string | hash | url): void {

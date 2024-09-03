@@ -10,6 +10,7 @@ function ____exports.init(self)
     self.view = GameView()
     self.logic.init()
     self.view.init()
+    Camera.set_dynamic_orientation(false)
 end
 function ____exports.on_message(self, message_id, message, sender)
     Manager.on_message(self, message_id, message, sender)
